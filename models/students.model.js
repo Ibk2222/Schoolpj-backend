@@ -36,7 +36,7 @@ const studentsSchema = new mongoose.Schema(
       trim: true,
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"]
     },
-    age: { type: Number, required: true, min: 1 },
+    age: { type: Number, required: true, min: 0, max: 12 },
     password: {
       type: String,
       required: true,
@@ -54,7 +54,7 @@ const studentsSchema = new mongoose.Schema(
 
     image: { type: String, default: '' },
       dob: { type: Date, required: true },
-      gender: { type: String, required: true},
+      gender: { type: String, required: true, enum: ["male", "female"] },
       address: { type: String, required: true },
       is_active: { type: Boolean, default: true },
 parent_phone: {type: String,required: true, trim: true, match: [/^\+?[0-9]{12,}$/, "Invalid phone number format"]
