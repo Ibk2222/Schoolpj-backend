@@ -23,7 +23,7 @@ const classesSchema = new mongoose.Schema(
     room: { type: String, default: '' },
     schedule: {
       days: [String],
-      time: { type: Date, required: true }
+      time: { type: Date, default: null }
     },
 
   },

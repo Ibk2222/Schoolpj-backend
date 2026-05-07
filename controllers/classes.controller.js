@@ -68,7 +68,7 @@ const createClass =  (req, res) => {
           const message = error.errors
             ? Object.values(error.errors)[0].message
             : error.message ?? "Error adding class";
-          res.status(500).send({ status: false, message });
+          res.status(400).send({ status: false, message });
         });
 }
 
