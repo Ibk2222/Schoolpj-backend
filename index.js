@@ -1,9 +1,8 @@
-
 const express= require("express")
 const app =express()
 const ejs = require("ejs")
 require("dotenv").config({ override: true });
-const PORT = process.env.PORT 
+const PORT = process.env.PORT || 3000
 const mongoose = require("mongoose")
 const adminRoute = require("./routes/admin.route");
 const studentRoute = require("./routes/students.route");
@@ -19,32 +18,19 @@ app.use("/admin", adminRoute)
 app.use("/students", studentRoute)
 app.use("/teacher", teacherRoute)
 
-
-
-// app.get('/login', (req, res) => {
-//   res.render('login');
-// });
-
-// app.get('/', (req, res) => {
-//   res.render('index');
-// });
-
-// app.get('/dashboard', (req, res) => {
-//   res.render('dashboard');
-// });
-
-
- 
-
-
-
-
-
-
 mongoose
   .connect(URI)
-  .then(() => {
+  .then(async () => {
     console.log("Database connected");
+    const staleIndexes = ['class_name_1', 'name_1'];
+    for (const idx of staleIndexes) {
+      try {
+        await mongoose.connection.collection('classes').dropIndex(idx);
+        console.log(`Dropped stale index: ${idx}`);
+      } catch (e) {
+        if (e.codeName !== 'IndexNotFound') console.log(`dropIndex ${idx}:`, e.message);
+      }
+    }
   })
   .catch((error) => {
     console.log("Database connection failed");
@@ -65,12 +51,11 @@ let io = socketClient(connections, {
 })
 io.on("connection", (socket)=>{
   console.log("A user connected successfully")
-  // console.log(socket.id)
   socket.on("sendMsg", (message)=>{
     console.log(message)
     io.emit("broadcastMsg", message)
   })
-  socket.on("disconnect user", ()=>{
+  socket.on("disconnect", ()=>{
     console.log("someone disconnected")
   })
 })
