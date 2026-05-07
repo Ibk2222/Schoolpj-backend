@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Admins</title>
+  <style>
+    body { margin: 0; background: #0c121d; color: #f8fafc; font-family: Inter, system-ui, sans-serif; }
+    .shell { max-width: 1140px; margin: 0 auto; padding: 28px; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; }
+    h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.6rem); }
+    .button { padding: 12px 18px; background: #7c3aed; color: white; border-radius: 14px; text-decoration: none; font-weight: 600; }
+    .button:hover { background: #6d28d9; }
+    .card { margin-top: 24px; border-radius: 22px; background: #111827; border: 1px solid #1f2937; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 16px 18px; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+    th { text-transform: uppercase; color: #94a3b8; font-size: 0.8rem; letter-spacing: 0.12em; }
+    td { color: #edf2f7; font-size: 0.95rem; }
+    .badge { display: inline-flex; align-items: center; justify-content: center; padding: 6px 12px; border-radius: 999px; background: #22c55e; color: #ecfdf5; font-weight: 600; font-size: 0.82rem; }
+    .badge.off { background: #475569; }
+    .actions a { color: #93c5fd; text-decoration: none; margin-right: 12px; }
+    .actions a:hover { text-decoration: underline; }
+    .empty { padding: 38px; text-align: center; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>Manage Admins</h1>
+        <p style="margin: 8px 0 0; color: #9bb3d1;">Maintain administrator accounts and review active admin details.</p>
+      </div>
+      <a class="button" href="/admin/signupadmin">Add New Admin</a>
+    </header>
+    <div class="card">
+      <% if (admins && admins.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% admins.forEach(admin => { %>
+          <tr>
+            <td><%= admin.firstname %> <%= admin.lastname %></td>
+            <td><%= admin.email %></td>
+            <td><%= admin.age %></td>
+            <td><%= admin.phone %></td>
+            <td><span class="badge <%= admin.is_active ? '' : 'off' %>"><%= admin.is_active ? 'Active' : 'Inactive' %></span></td>
+            <td class="actions">
+              <a href="/admin/edit-admin/<%= admin._id %>">Edit</a>
+              <a href="/admin/delete-admin/<%= admin._id %>">Delete</a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="empty">No administrator accounts have been created yet.</div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

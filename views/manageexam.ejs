@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Exams</title>
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #08101f; color: #eef2ff; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; }
+    h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.6rem); }
+    .button { padding: 12px 18px; background: #f97316; color: #fff; border-radius: 14px; text-decoration: none; font-weight: 700; }
+    .button:hover { background: #ea580c; }
+    .card { margin-top: 24px; background: rgba(14, 23, 42, 0.96); border-radius: 24px; border: 1px solid rgba(148, 163, 184, 0.16); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 16px 18px; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+    th { text-transform: uppercase; font-size: 0.8rem; color: #94a3b8; letter-spacing: 0.12em; }
+    td { color: #e2e8f0; font-size: 0.95rem; }
+    .note { color: #94a3b8; font-size: 0.85rem; }
+    .actions a { color: #fbcfe8; text-decoration: none; margin-right: 10px; }
+    .actions a:hover { text-decoration: underline; }
+    .empty { padding: 40px; text-align: center; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>Manage Exams</h1>
+        <p style="margin: 8px 0 0; color: #94a3b8;">View exam assignments, score ranges, and exam timeframes.</p>
+      </div>
+      <a class="button" href="/admin/addexam">Add Exam</a>
+    </header>
+    <div class="card">
+      <% if (exams && exams.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Subject</th>
+            <th>Teacher</th>
+            <th>Grade</th>
+            <th>Score</th>
+            <th>Max</th>
+            <th>Passing</th>
+            <th>Window</th>
+            <th>Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% exams.forEach(exam => { %>
+          <tr>
+            <td><%= exam.student_id || '—' %></td>
+            <td><%= exam.subject_id || '—' %></td>
+            <td><%= exam.teacher_id || '—' %></td>
+            <td><%= exam.grade_level %></td>
+            <td><%= exam.score %></td>
+            <td><%= exam.max_score %></td>
+            <td><%= exam.passing_score %></td>
+            <td class="note"><%= exam.start_date ? new Date(exam.start_date).toISOString().slice(0, 10) : '—' %> — <%= exam.end_date ? new Date(exam.end_date).toISOString().slice(0, 10) : '—' %></td>
+            <td><span class="note"><%= exam.is_active ? 'Yes' : 'No' %></span></td>
+            <td class="actions">
+              <a href="/admin/edit-exam/<%= exam._id %>">Edit</a>
+              <a href="/admin/delete-exam/<%= exam._id %>">Delete</a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="empty">No exams have been scheduled yet.</div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

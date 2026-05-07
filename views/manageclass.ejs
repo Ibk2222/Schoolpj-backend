@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Classes</title>
+  <style>
+    body { margin: 0; background: linear-gradient(135deg, #08101b 0%, #12203a 100%); color: #eef2ff; font-family: Inter, system-ui, sans-serif; }
+    .shell { max-width: 1160px; margin: 0 auto; padding: 28px; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; }
+    h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.6rem); }
+    .button { padding: 12px 18px; background: #14b8a6; color: #0f172a; border-radius: 14px; text-decoration: none; font-weight: 700; }
+    .button:hover { background: #0f766e; }
+    .card { margin-top: 24px; background: rgba(15, 23, 42, 0.96); border-radius: 24px; border: 1px solid rgba(148, 163, 184, 0.16); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 16px 18px; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+    th { letter-spacing: 0.12em; text-transform: uppercase; color: #94a3b8; font-size: 0.8rem; }
+    td { color: #e2e8f0; font-size: 0.95rem; }
+    .meta { color: #94a3b8; font-size: 0.86rem; }
+    .badge { display: inline-flex; padding: 6px 12px; border-radius: 999px; background: #3b82f6; color: #eff6ff; font-size: 0.82rem; }
+    .badge.off { background: #475569; }
+    .actions a { color: #93c5fd; text-decoration: none; margin-right: 10px; }
+    .actions a:hover { text-decoration: underline; }
+    .empty { padding: 40px; text-align: center; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>Manage Classes</h1>
+        <p style="margin: 8px 0 0; color: #9bb3d1;">Review class assignments and academic year schedules.</p>
+      </div>
+      <a class="button" href="/admin/addclass">Add Class</a>
+    </header>
+    <div class="card">
+      <% if (classes && classes.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Teacher ID</th>
+            <th>Academic Year</th>
+            <th>Schedule</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% classes.forEach(cls => { %>
+          <tr>
+            <td><%= cls.student_id || '—' %></td>
+            <td><%= cls.teacher_id || '—' %></td>
+            <td><%= cls.academic_year %></td>
+            <td class="meta"><%= Array.isArray(cls.schedule?.days) ? cls.schedule.days.join(', ') : '—' %><br /><%= cls.schedule?.time ? new Date(cls.schedule.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '' %></td>
+            <td><span class="badge <%= cls.is_active ? '' : 'off' %>"><%= cls.is_active ? 'Active' : 'Inactive' %></span></td>
+            <td class="actions">
+              <a href="/admin/edit-class/<%= cls._id %>">Edit</a>
+              <a href="/admin/delete-class/<%= cls._id %>">Delete</a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="empty">No classes registered yet.</div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

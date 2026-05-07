@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Signup</title>
+  <style>
+    body { margin: 0; min-height: 100vh; font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #111827 100%); color: #e2e8f0; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .signup-card { width: min(480px, 100%); background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 28px; padding: 32px; box-shadow: 0 24px 80px rgba(15, 23, 42, 0.45); }
+    .signup-card h1 { margin: 0 0 8px; font-size: clamp(2rem, 3vw, 2.4rem); }
+    .signup-card p { margin: 0 0 24px; color: #94a3b8; }
+    .errors { margin: 0 0 20px; color: #fecaca; background: #7f1d1d; padding: 14px 16px; border-radius: 16px; }
+    .form-grid { display: grid; gap: 14px; }
+    label { display: grid; gap: 8px; color: #cbd5e1; font-weight: 600; }
+    input, select { width: 100%; padding: 14px 16px; border-radius: 16px; border: 1px solid #334155; background: #0f172a; color: #e2e8f0; }
+    input::placeholder, select option { color: #94a3b8; }
+    button { width: 100%; margin-top: 6px; padding: 14px 16px; border: none; border-radius: 16px; background: #2563eb; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    .footer { margin-top: 22px; text-align: center; color: #94a3b8; }
+    .footer a { color: #60a5fa; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="signup-card">
+    <h1>Student Signup</h1>
+    <p>Create your student account to access the portal.</p>
+    <% if (typeof errors !== 'undefined' && Object.keys(errors).length) { %>
+      <div class="errors">
+        <ul style="margin:0; padding-left:18px;">
+          <% Object.values(errors).forEach(error => { %>
+            <li><%= error %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+    <form action="/students/registerstudent" method="POST">
+      <div class="form-grid">
+        <label>
+          First Name
+          <input type="text" name="firstname" placeholder="First Name" required />
+        </label>
+        <label>
+          Last Name
+          <input type="text" name="lastname" placeholder="Last Name" required />
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" placeholder="Email" required />
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" placeholder="Password" required />
+        </label>
+        <label>
+          Age
+          <input type="number" name="age" placeholder="Age" min="10" required />
+        </label>
+        <label>
+          Date of birth
+          <input type="date" name="dob" required />
+        </label>
+        <label>
+          Gender
+          <select name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label>
+          Address
+          <input type="text" name="address" placeholder="Address" required />
+        </label>
+        <label>
+          Parent phone
+          <input type="tel" name="parent_phone" placeholder="+1234567890" required />
+        </label>
+      </div>
+      <button type="submit">Create Account</button>
+    </form>
+    <div class="footer">
+      <p>Already registered? <a href="/students/loginstudent">Login</a></p>
+    </div>
+  </div>
+</body>
+</html>

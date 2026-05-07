@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Portal</title>
+</head>
+<body>
+  <h1>Teacher Registration</h1>
+  <form action="/teacher/register" method="post">
+  <!-- Title -->
+<select name="title">
+  <option value="">Select Title</option>
+  <option value="Mr">Mr</option>
+  <option value="Mrs">Mrs</option>
+  <option value="Dr">Dr</option>
+</select>
+
+<!-- First Name -->
+<input type="text" name="firstname" />
+
+
+<!-- Last Name -->
+<input type="text" name="lastname" />
+
+<!-- Email -->
+<input type="email" name="email" />
+
+
+<!-- Age -->
+<input type="number" name="age" />
+
+<!-- Password -->
+<input type="password" name="password" />
+
+
+<!-- Phone -->
+<input type="text" name="phone" />
+    <input type="date" name="joined_in" placeholder="Joined In" required>
+    <button type="submit">Register</button>
+  </form>
+</body>
+</html>

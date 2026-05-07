@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Signup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .signup-card {
+      width: 420px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+    }
+    .signup-card h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      text-align: center;
+    }
+    .signup-card input {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      border: 1px solid #ccd0d8;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .signup-card button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+    .signup-card button:hover {
+      background: #0056d6;
+    }
+    .signup-card .footer {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .signup-card .footer a {
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-card">
+    <h1>Admin Signup</h1>
+    <form action="/admin/registersadmin" method="POST">
+      <input type="text" name="firstname" placeholder="First Name" required>
+      <input type="text" name="lastname" placeholder="Last Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="number" name="age" placeholder="Age" min="18" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <input type="tel" name="phone" placeholder="Phone" required>
+      <input type="date" name="joined_in" placeholder="Join Date" required>
+      <button type="submit">Sign Up</button>
+    </form>
+    <div class="footer">
+      <p>Already registered? <a href="/admin/loginadmin">Login</a></p>
+    </div>
+  </div>
+</body>
+</html>

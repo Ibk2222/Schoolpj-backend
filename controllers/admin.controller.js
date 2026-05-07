@@ -1,0 +1,240 @@
+const adminModel = require('../models/admin.model');
+const jwt = require("jsonwebtoken");
+
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY)
+const mongoose = require("mongoose");
+
+const signupPageAdmin =(req, res) => {
+   res.render("signupadmin");
+ } ;
+
+ const loginPageAdmin = (req, res) => {
+   res.render("loginadmin");
+ };
+
+const registerAdmin = async (req, res) => {
+    let form= new adminModel(req.body);
+  form.save().then((admin)=>{
+      res.send({ status: true, message: "Registration successful" })
+  }).catch((err)=>{
+      console.log(err);
+      const message = err.errors
+          ? Object.values(err.errors)[0].message
+          : "Registration failed"
+      res.send({ message, status: false });
+  });
+};
+
+const loginAdmin = async (req, res) => {
+  console.log(req.body);
+  let { password } = req.body;
+  adminModel.findOne({ email: req.body.email })
+    .then((admin) => {
+      // console.log(teacher);
+      if (admin) {
+        //email is valid
+        admin.validatePassword(password, (err, same) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send({ status: false, message: 'Server error' });
+          }
+          if (!same) {
+            console.log("Invalid password");
+            return res.send({ status: false, message: "Invalid Credentials" });
+          }
+          const token = jwt.sign({ email: admin.email, id: admin._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' })
+          res.send({ status: true, message: 'Valid Credentials', token, role: 'admin' })
+        });
+      } else {
+        console.log("Invalid email");
+        res.send({ status: false, message: "Invalid Credential" });
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+      res.status(500).send({ status: false, message: 'Server error' })
+    });
+};
+
+const getAllAdmins =  (req, res) => {
+   adminModel.find()
+        .then((admins) => {
+          res.send({ status: true, admins });
+        })
+        .catch((error) => {
+          console.log(error);
+          res.status(500).send({ status: false, message: "Error fetching admins" });
+        });
+}
+
+const getAdminById = async (req, res) => {
+    const adminId = req.params.id;
+    
+          if (!mongoose.Types.ObjectId.isValid(adminId)) {
+            return res.status(400).send("Invalid admin id");
+          }
+       adminModel
+        .findById(adminId)
+        .then((admin) => {
+          res.render("editadmin", {admin});
+          console.log(admin);
+        })
+        .catch((error) => {
+          console.log("There is an error");
+          console.log(error);
+          res.status(500).send("Error loading admin data");
+        });
+}
+    
+//   try {
+//     const admin = await Admin.findById(req.params.id);
+//     if (!admin) {
+//       return res.status(404).json({ message: 'Admin not found' });
+//     }
+//     res.status(200).json(admin);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+const updateAdmin =  (req, res) => {
+const adminId = req.params.id;
+      adminModel.findByIdAndUpdate(adminId, req.body, { new: true })
+      .then(()=>{
+        res.send({ status: true, message: "Admin updated successfully" });
+      })
+      .catch((error)=>{
+        console.log(error)
+        res.status(500).send({ status: false, message: "Error updating admin" });
+      })
+}
+
+const deleteAdmin = (req, res) => {
+      const adminId = req.params.id;
+      if (!mongoose.Types.ObjectId.isValid(adminId)) {
+        return res.status(400).send({ status: false, message: "Invalid admin id" });
+      }
+
+      adminModel
+        .findByIdAndDelete(adminId)
+        .then(() => {
+          res.send({ status: true, message: "Admin deleted" });
+        })
+        .catch((error) => {
+          console.log(error);
+          res.status(500).send({ status: false, message: "Error deleting admin" });
+        });
+}
+const getAdminDashboard = async (req, res) => {
+   const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .send({ status: false, message: "Missing or malformed token" });
+    }
+  
+    const token = authHeader.split(" ")[1];
+  
+    jwt.verify(token, process.env.JWT_SECRET || "secret", async (err, decoded) => {
+      if (err) {
+        console.log(err);
+        return res
+          .status(401)
+          .send({ status: false, message: "Token expired or invalid token" });
+      }
+  
+      const email = decoded?.email;
+      if (!email) {
+        return res
+          .status(401)
+          .send({ status: false, message: "Invalid token payload" });
+      }
+  
+      try {
+        const admin = await adminModel.findOne(
+          { email },
+          { firstname: 1, lastname: 1, email: 1, age: 1, phone: 1, joined_in: 1, role: 1, _id: 1 },
+        );
+  
+        if (!admin) {
+          return res
+            .status(404)
+            .send({ status: false, message: "admin not found" });
+        }
+  
+        const teachersModel = require('../models/teachers.model')
+        const studentsModel = require('../models/students.model')
+        const classesModel  = require('../models/classes.model')
+        const subjectsModel = require('../models/subjects.model')
+        const [totalTeachers, totalStudents, totalClasses, totalSubjects] = await Promise.all([
+          teachersModel.countDocuments(),
+          studentsModel.countDocuments(),
+          classesModel.countDocuments(),
+          subjectsModel.countDocuments(),
+        ])
+        return res.send({ status: true, admin, stats: { totalTeachers, totalStudents, totalClasses, totalSubjects } });
+      } catch (findErr) {
+        console.log(findErr);
+        return res
+          .status(500)
+          .send({ status: false, message: "Error fetching admin data" });
+      }
+    });}
+
+const forgotPasswordAdmin = async (req, res) => {
+  const { email } = req.body
+  if (!email) return res.status(400).send({ status: false, message: 'Email is required' })
+  try {
+    const admin = await adminModel.findOne({ email })
+    if (!admin) return res.status(404).send({ status: false, message: 'No account found with that email' })
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString()
+    const expiry = new Date(Date.now() + 15 * 60 * 1000)
+
+    await adminModel.findByIdAndUpdate(admin._id, { resetCode: code, resetCodeExpiry: expiry })
+
+    res.send({ status: true, resetCode: code })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send({ status: false, message: 'Server error' })
+  }
+}
+ 
+const resetPasswordAdmin = async (req, res) => {
+  const { email, code, newPassword } = req.body
+  if (!email || !code || !newPassword)
+    return res.status(400).send({ status: false, message: 'All fields are required' })
+  try {
+    const admin = await adminModel.findOne({ email })
+    if (!admin) return res.status(404).send({ status: false, message: 'Account not found' })
+    if (!admin.resetCode || admin.resetCode !== code)
+      return res.status(400).send({ status: false, message: 'Invalid reset code' })
+    if (!admin.resetCodeExpiry || new Date() > admin.resetCodeExpiry)
+      return res.status(400).send({ status: false, message: 'Reset code has expired. Please request a new one.' })
+ 
+    admin.password = newPassword
+    admin.resetCode = null
+    admin.resetCodeExpiry = null
+    await admin.save()
+ 
+    res.send({ status: true, message: 'Password reset successfully' })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send({ status: false, message: e.message ?? 'Error resetting password' })
+  }
+}
+
+module.exports = {
+  signupPageAdmin,
+  registerAdmin,
+  loginPageAdmin,
+  loginAdmin,
+  getAllAdmins,
+  getAdminById,
+  updateAdmin,
+  deleteAdmin,
+  getAdminDashboard,
+  forgotPasswordAdmin,
+  resetPasswordAdmin,
+};

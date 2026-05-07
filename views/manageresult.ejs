@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Results</title>
+  <style>
+    body { margin: 0; background: radial-gradient(circle at top, #07121f 0%, #0c1729 55%); color: #edf2f7; font-family: Inter, system-ui, sans-serif; }
+    .shell { max-width: 1160px; margin: 0 auto; padding: 28px; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; align-items: center; }
+    h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.6rem); }
+    .button { padding: 12px 18px; background: #0ea5e9; color: white; border-radius: 14px; text-decoration: none; font-weight: 700; }
+    .button:hover { background: #0284c7; }
+    .card { margin-top: 24px; border-radius: 24px; background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(148, 163, 184, 0.16); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 16px 18px; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+    th { color: #94a3b8; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; }
+    td { color: #e2e8f0; font-size: 0.95rem; }
+    .note { color: #94a3b8; font-size: 0.85rem; }
+    .actions a { color: #bfdbfe; text-decoration: none; margin-right: 10px; }
+    .actions a:hover { text-decoration: underline; }
+    .empty { padding: 38px; text-align: center; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>Manage Results</h1>
+        <p style="margin: 8px 0 0; color: #94a3b8;">Review student results, linked exams, and grading details.</p>
+      </div>
+      <a class="button" href="/admin/addresult">Add Result</a>
+    </header>
+    <div class="card">
+      <% if (results && results.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Exam</th>
+            <th>Score</th>
+            <th>Grade</th>
+            <th>Teacher</th>
+            <th>Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% results.forEach(result => { %>
+          <tr>
+            <td><%= result.student || '—' %></td>
+            <td><%= result.exam || '—' %></td>
+            <td><%= result.score %></td>
+            <td><%= result.grade_level %></td>
+            <td><%= result.teacher || '—' %></td>
+            <td class="note"><%= result.is_active ? 'Yes' : 'No' %></td>
+            <td class="actions">
+              <a href="/admin/edit-result/<%= result._id %>">Edit</a>
+              <a href="/admin/delete-result/<%= result._id %>">Delete</a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="empty">No result records are available yet.</div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

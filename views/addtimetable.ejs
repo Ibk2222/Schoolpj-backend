@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Timetable</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', Inter, system-ui, sans-serif; min-height: 100vh; }
+    .page { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+    .form-card {
+      width: min(780px, 100%);
+      background: #111827;
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      padding: 36px 32px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .card-header { margin-bottom: 28px; }
+    .card-header h1 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; color: #f1f5f9; }
+    .card-header p { color: #94a3b8; font-size: 0.92rem; margin-top: 6px; }
+    form { display: grid; gap: 18px; }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    label { display: grid; gap: 7px; color: #cbd5e1; font-weight: 600; font-size: 0.9rem; }
+    input, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus { border-color: #2563eb; }
+    .actions { display: flex; gap: 12px; margin-top: 8px; }
+    .btn-primary {
+      flex: 1; padding: 14px;
+      border: none; border-radius: 12px;
+      font-size: 1rem; font-weight: 600;
+      background: #2563eb; color: white; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary {
+      padding: 14px 24px;
+      border: 1px solid #334155; border-radius: 12px;
+      font-size: 1rem; font-weight: 600;
+      background: #1e293b; color: #cbd5e1; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: #334155; }
+    .hint { color: #64748b; font-size: 0.83rem; margin-top: 12px; }
+    @media (max-width: 560px) { .row-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="form-card">
+      <div class="card-header">
+        <h1>Add Timetable Entry</h1>
+        <p>Fill in the details below to schedule a class slot.</p>
+      </div>
+
+      <form action="/admin/create-timetable" method="POST">
+
+        <div class="row-2">
+          <label>
+            Class ID
+            <input type="text" name="class" placeholder="Enter class object ID" required />
+          </label>
+          <label>
+            Teacher ID
+            <input type="text" name="teacher" placeholder="Enter teacher object ID" required />
+          </label>
+        </div>
+
+        <div class="row-2">
+          <label>
+            Subject ID
+            <input type="text" name="subject" placeholder="Enter subject object ID" required />
+          </label>
+          <label>
+            Day of Week
+            <select name="day_of_week" required>
+              <option value="" disabled selected>Select a day</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="row-2">
+          <label>
+            Start Time (HH:MM)
+            <input type="time" name="start_time" required />
+          </label>
+          <label>
+            End Time (HH:MM)
+            <input type="time" name="end_time" required />
+          </label>
+        </div>
+
+        <div class="row-2">
+          <label>
+            Room
+            <input type="text" name="room" placeholder="e.g. Room 101, Lab A" required />
+          </label>
+          <label>
+            Academic Year
+            <input type="text" name="academic_year" placeholder="e.g. 2024-2025" pattern="\d{4}-\d{4}" required />
+          </label>
+        </div>
+
+        <label>
+          Status
+          <select name="is_active" required>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </label>
+
+        <div class="actions">
+          <a href="/admin/all-timetables" class="btn-secondary">Cancel</a>
+          <button type="submit" class="btn-primary">Save Timetable</button>
+        </div>
+      </form>
+
+      <p class="hint">Times must be in 24-hour HH:MM format. Academic year must follow YYYY-YYYY format.</p>
+    </div>
+  </div>
+</body>
+</html>

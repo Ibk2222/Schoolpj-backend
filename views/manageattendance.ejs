@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Attendance</title>
+  <style>
+    body { margin: 0; background: linear-gradient(135deg, #07121f 0%, #101f36 100%); color: #eaf2ff; font-family: Inter, system-ui, sans-serif; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; align-items: center; }
+    h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.8rem); letter-spacing: -0.04em; }
+    p { margin: 8px 0 0; color: #9bb3d1; }
+    .button { display: inline-flex; align-items: center; justify-content: center; padding: 12px 18px; background: #3b82f6; color: white; border-radius: 14px; text-decoration: none; font-weight: 600; }
+    .card { margin-top: 24px; border-radius: 24px; overflow: hidden; background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(148, 163, 184, 0.14); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 16px 18px; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+    th { text-transform: uppercase; font-size: 0.82rem; letter-spacing: 0.12em; color: #94a3b8; }
+    td { color: #e2e8f0; font-size: 0.95rem; }
+    tr:last-child td { border-bottom: none; }
+    .pill { display: inline-flex; padding: 6px 12px; border-radius: 999px; background: rgba(59, 130, 246, 0.12); color: #bfdbfe; font-weight: 600; font-size: 0.82rem; }
+    .pill.absent { background: rgba(248, 113, 113, 0.16); color: #fecaca; }
+    .actions a { margin-right: 12px; color: #93c5fd; text-decoration: none; }
+    .actions a:hover { text-decoration: underline; }
+    .empty { padding: 44px; text-align: center; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>Manage Attendance</h1>
+        <p>Track attendance entries and update records for classes, students, and teachers.</p>
+      </div>
+      <a class="button" href="/admin/addattendance">Add Attendance</a>
+    </header>
+    <div class="card">
+      <% if (attendances && attendances.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Class</th>
+            <th>Student</th>
+            <th>Teacher</th>
+            <th>Marked By</th>
+            <th>Status</th>
+            <th>Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% attendances.forEach(item => { %>
+          <tr>
+            <td><%= item.date ? item.date.toISOString().slice(0, 10) : '-' %></td>
+            <td><%= item.class_id || '-' %></td>
+            <td><%= item.student_id || '-' %></td>
+            <td><%= item.teacher_id || '-' %></td>
+            <td><%= item.marked_by || '-' %></td>
+            <td><span class="pill <%= item.status === 'absent' ? 'absent' : '' %>"><%= item.status || 'unknown' %></span></td>
+            <td><span class="pill"><%= item.is_active ? 'Yes' : 'No' %></span></td>
+            <td class="actions">
+              <a href="/admin/edit-attendance/<%= item._id %>">Edit</a>
+              <a href="/admin/delete-attendance/<%= item._id %>">Delete</a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="empty">No attendance records available yet.</div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

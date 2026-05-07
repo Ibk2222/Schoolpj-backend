@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Students</title>
+  <style>
+    body { margin: 0; background: #070b14; color: #eef2ff; font-family: Inter, system-ui, sans-serif; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+    h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.6rem); }
+    .card { margin-top: 24px; background: rgba(15, 23, 42, 0.94); border-radius: 24px; border: 1px solid rgba(148, 163, 184, 0.16); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 16px 18px; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+    th { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.8rem; color: #94a3b8; }
+    td { color: #e2e8f0; font-size: 0.95rem; }
+    .badge { display: inline-flex; padding: 6px 12px; border-radius: 999px; background: #2563eb; color: #eff6ff; font-size: 0.82rem; }
+    .badge.off { background: #475569; }
+    .actions a { color: #93c5fd; text-decoration: none; margin-right: 10px; }
+    .actions a:hover { text-decoration: underline; }
+    .empty { padding: 40px; text-align: center; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>Manage Students</h1>
+        <p style="margin: 8px 0 0; color: #9bb3d1;">Browse student accounts, update details, and delete records if needed.</p>
+      </div>
+    </header>
+    <div class="card">
+      <% if (students && students.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>DOB</th>
+            <th>Gender</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% students.forEach(student => { %>
+          <tr>
+            <td><%= student.firstname %> <%= student.lastname %></td>
+            <td><%= student.email %></td>
+            <td><%= student.age %></td>
+            <td><%= student.dob ? new Date(student.dob).toISOString().slice(0, 10) : '-' %></td>
+            <td><%= student.gender %></td>
+            <td><%= student.parent_phone %></td>
+            <td><span class="badge <%= student.is_active ? '' : 'off' %>"><%= student.is_active ? 'Active' : 'Inactive' %></span></td>
+            <td class="actions">
+              <a href="/admin/edit-student/<%= student._id %>">Edit</a>
+              <a href="/admin/delete-student/<%= student._id %>">Delete</a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="empty">No student records found.</div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

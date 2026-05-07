@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Subjects</title>
+  <style>
+    body { margin: 0; background: #06111d; color: #eef2ff; font-family: Inter, system-ui, sans-serif; }
+    .shell { max-width: 1160px; margin: 0 auto; padding: 28px; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+    h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.6rem); }
+    .button { padding: 12px 18px; background: #2563eb; color: white; border-radius: 14px; text-decoration: none; font-weight: 700; }
+    .button:hover { background: #1d4ed8; }
+    .card { margin-top: 24px; background: rgba(15, 23, 42, 0.94); border-radius: 24px; border: 1px solid rgba(148, 163, 184, 0.16); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 16px 18px; border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+    th { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.8rem; color: #94a3b8; }
+    td { color: #e2e8f0; font-size: 0.95rem; }
+    .badge { display: inline-flex; padding: 6px 12px; border-radius: 999px; background: #22c55e; color: #0f172a; font-size: 0.82rem; font-weight: 600; }
+    .badge.off { background: #475569; color: #f8fafc; }
+    .actions a { color: #fbbf24; text-decoration: none; margin-right: 10px; }
+    .actions a:hover { text-decoration: underline; }
+    .empty { padding: 40px; text-align: center; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>Manage Subjects</h1>
+        <p style="margin: 8px 0 0; color: #94a3b8;">Review subject assignments and linked class/teacher relationships.</p>
+      </div>
+      <a class="button" href="<%= prefix %>/addsubject">Add Subject</a>
+    </header>
+    <div class="card">
+      <% if (subjects && subjects.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Class</th>
+            <th>Teacher</th>
+            <th>Students</th>
+            <th>Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% subjects.forEach(subject => { %>
+          <tr>
+            <td><%= subject.subject_name %></td>
+            <td><%= subject.classes_id ? subject.classes_id.name + ' (' + subject.classes_id.academic_year + ')' : '-' %></td>
+            <td><%= subject.teachers_id ? subject.teachers_id.firstname + ' ' + subject.teachers_id.lastname : '-' %></td>
+            <td>
+              <% if (subject.classes_id && subject.classes_id.student_id && subject.classes_id.student_id.length) { %>
+                <% subject.classes_id.student_id.forEach(s => { %>
+                  <span style="display:inline-block; background:#1e293b; border-radius:8px; padding:3px 8px; font-size:0.8rem; margin:2px;"><%= s.firstname %> <%= s.lastname %></span>
+                <% }) %>
+              <% } else { %>
+                -
+              <% } %>
+            </td>
+            <td><span class="badge <%= subject.is_active ? '' : 'off' %>"><%= subject.is_active ? 'Yes' : 'No' %></span></td>
+            <td class="actions">
+              <a href="<%= prefix %>/edit-subject/<%= subject._id %>">Edit</a>
+              <a href="<%= prefix %>/delete-subject/<%= subject._id %>">Delete</a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <div class="empty">No subjects have been added yet.</div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

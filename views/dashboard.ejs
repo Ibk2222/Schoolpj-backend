@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; }
+    .page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .card { width: min(900px, 100%); background: #111827; border-radius: 28px; border: 1px solid #1f2937; box-shadow: 0 30px 60px rgba(15, 23, 42, 0.35); padding: 36px; }
+    .card h1 { margin: 0 0 12px; font-size: 2.4rem; }
+    .card p { margin: 12px 0; color: #94a3b8; line-height: 1.6; }
+    .field { display: grid; gap: 4px; margin-top: 18px; }
+    .field strong { color: #fff; }
+    .footer { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 14px; }
+    .button { display: inline-block; padding: 12px 18px; background: #2563eb; color: #fff; border-radius: 14px; text-decoration: none; font-weight: 600; }
+    .button:hover { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <% const user = typeof admin !== 'undefined' ? admin : typeof teacher !== 'undefined' ? teacher : {}; %>
+      <h1>Welcome back, <%= user.title ? user.title + ' ' : '' %><%= user.firstname || 'User' %> <%= user.lastname || '' %></h1>
+      <p>This is your dashboard. Use these quick links to manage your account and review your assigned data.</p>
+      <div class="field"><strong>Email</strong><span><%= user.email || 'Not available' %></span></div>
+      <div class="field"><strong>Age</strong><span><%= user.age || 'Not available' %></span></div>
+      <div class="field"><strong>Role</strong><span><%= user.role || 'User' %></span></div>
+      <div class="field"><strong>Joined</strong><span><%= user.joined_in ? new Date(user.joined_in).toISOString().slice(0, 10) : 'Not available' %></span></div>
+      <div class="footer">
+        <a class="button" href="/admin/dashboardadmin">Admin portal</a>
+        <a class="button" href="/teacher/dashboard">Teacher portal</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
