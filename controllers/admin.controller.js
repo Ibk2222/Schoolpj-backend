@@ -203,7 +203,7 @@ const forgotPasswordAdmin = async (req, res) => {
       html: `<p>Your password reset code is: <strong>${code}</strong></p><p>This code expires in 15 minutes.</p>`
     })
 
-    res.send({ status: true, message: 'Reset code sent to your email', resetCode: code })
+    res.send({ status: true, message: 'Reset code sent to your email' })
   } catch (e) {
     console.log(e)
     res.status(500).send({ status: false, message: 'Server error' })
