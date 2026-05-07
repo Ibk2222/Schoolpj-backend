@@ -1,8 +1,27 @@
 const timetablesModel = require('../models/timetables.model');
+const classesModel = require('../models/classes.model');
+const teachersModel = require('../models/teachers.model');
+const subjectModel = require('../models/subjects.model');
 const express = require("express");
 const app = express();
 
 const mongoose = require("mongoose");
+
+const createTimetablePage = async (req, res) => {
+  try {
+    const [classes, teachers, subjects] = await Promise.all([
+      classesModel.find({}, 'name academic_year _id'),
+      teachersModel.find({}, 'firstname lastname _id'),
+      subjectModel.find({}, 'subject_name _id'),
+    ]);
+    const isTeacher = req.originalUrl.startsWith('/teacher');
+    const formAction = isTeacher ? '/teacher/create-timetable' : '/admin/create-timetable';
+    res.render("addtimetable", { classes, teachers, subjects, formAction });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error loading timetable form");
+  }
+};
 
 const getAllTimetables = (req, res) => {
   timetablesModel
@@ -75,6 +94,7 @@ const deleteTimetable = (req, res) => {
 };
 
 module.exports = {
+  createTimetablePage,
   getAllTimetables,
   getTimetableById,
   createTimetable,
