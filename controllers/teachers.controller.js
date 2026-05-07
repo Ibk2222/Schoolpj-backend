@@ -268,7 +268,14 @@ const forgotPasswordTeacher = async (req, res) => {
 
     await teacherModel.findByIdAndUpdate(teacher._id, { resetCode: code, resetCodeExpiry: expiry })
 
-    res.send({ status: true, resetCode: code })
+    await resend.emails.send({
+      from: 'ABC School <onboarding@resend.dev>',
+      to: [email],
+      subject: 'Your Password Reset Code',
+      html: `<p>Your password reset code is: <strong>${code}</strong></p><p>This code expires in 15 minutes.</p>`
+    })
+
+    res.send({ status: true, message: 'Reset code sent to your email' })
   } catch (e) {
     console.log(e)
     res.status(500).send({ status: false, message: 'Server error' })
