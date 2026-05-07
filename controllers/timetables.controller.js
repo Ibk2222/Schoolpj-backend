@@ -23,17 +23,31 @@ const createTimetablePage = async (req, res) => {
   }
 };
 
-const getAllTimetables = (req, res) => {
-  timetablesModel
-    .find()
-    .populate('class', 'name')
-    .populate('teacher', 'firstname lastname')
-    .populate('subject', 'subject_name')
-    .then((timetables) => res.send({ status: true, timetables }))
-    .catch((error) => {
-      console.log(error)
-      res.status(500).send({ status: false, message: 'Error fetching timetables' })
-    })
+const getAllTimetables = async (req, res) => {
+  try {
+    const search = (req.query.search || req.query.q || '').toLowerCase().trim()
+    let timetables = await timetablesModel.find()
+      .populate('class', 'name')
+      .populate('teacher', 'firstname lastname')
+      .populate('subject', 'subject_name')
+
+    if (search) {
+      timetables = timetables.filter(t => {
+        const className    = (t.class?.name || '').toLowerCase()
+        const teacherName  = `${t.teacher?.firstname || ''} ${t.teacher?.lastname || ''}`.toLowerCase()
+        const subjectName  = (t.subject?.subject_name || '').toLowerCase()
+        const day          = (t.day_of_week || '').toLowerCase()
+        const year         = (t.academic_year || '').toLowerCase()
+        return className.includes(search) || teacherName.includes(search) ||
+               subjectName.includes(search) || day.includes(search) || year.includes(search)
+      })
+    }
+
+    res.send({ status: true, timetables })
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({ status: false, message: 'Error fetching timetables' })
+  }
 }
 
 const getTimetableById = async (req, res) => {
@@ -54,7 +68,8 @@ const createTimetable = (req, res) => {
     .then(() => res.send({ status: true, message: 'Timetable added successfully' }))
     .catch((error) => {
       console.log(error)
-      res.status(500).send({ status: false, message: error.message ?? 'Error adding timetable' })
+      const isValidation = error.name === 'ValidationError' || error.name === 'CastError'
+      res.status(isValidation ? 400 : 500).send({ status: false, message: error.message ?? 'Error adding timetable' })
     })
 }
 

@@ -62,7 +62,7 @@ const { createSubjectPage, manageSubjectPage, getAllSubjects,
   updateSubject,
   deleteSubject } = require('../controllers/subjects.controller');
   const {createTestPage, getAllTests, getTestById, createTest, updateTest, editTest, deleteTest} = require('../controllers/test.controller');
-const { getAllTimetables, getTimetableById, createTimetable, updateTimetable, editTimetable, deleteTimetable } = require('../controllers/timetables.controller');
+const { createTimetablePage, getAllTimetables, getTimetableById, createTimetable, updateTimetable, editTimetable, deleteTimetable } = require('../controllers/timetables.controller');
 const { getAllExams, createExamPage,  getExamById, createExam, updateExam, editExam, deleteExam } = require('../controllers/exams.controller');
 const { getAllResults, createResultPage, getResultById, createResult, updateResult, editResult, deleteResult } = require('../controllers/result.controller');
 const { createAttendancePage, getAllAttendance, editAttendance, createAttendance, updateAttendance, deleteAttendance } = require('../controllers/attendance.controller');
@@ -116,6 +116,7 @@ router.post('/update-exam/:id', updateExam);
 router.get('/delete-exam/:id', deleteExam);
 
 // timetable routes
+router.get('/addtimetable', createTimetablePage);
 router.get('/all-timetables', getAllTimetables);
 router.post('/create-timetable', createTimetable);
 router.get('/edit-timetable/:id', editTimetable);

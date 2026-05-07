@@ -5,7 +5,7 @@ const {
   deleteAdmin, getAdminDashboard, forgotPasswordAdmin, resetPasswordAdmin,
 } = require('../controllers/admin.controller');
 const {
-  getAllTimetables, getTimetableById, createTimetable, updateTimetable, editTimetable, deleteTimetable
+  createTimetablePage, getAllTimetables, getTimetableById, createTimetable, updateTimetable, editTimetable, deleteTimetable
 } = require('../controllers/timetables.controller');
 const {
   createExamPage, getAllExams, getExamById, createExam, updateExam, editExam, deleteExam
@@ -96,6 +96,7 @@ router.post('/update-result/:id', updateResult);
 router.get('/delete-result/:id', deleteResult);
 
 // timeTable routes
+router.get('/addtimetable', createTimetablePage);
 router.get('/all-timetables', getAllTimetables);
 router.post('/create-timetable', createTimetable);
 router.get('/edit-timetable/:id', editTimetable);
