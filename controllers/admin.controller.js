@@ -167,13 +167,15 @@ const getAdminDashboard = async (req, res) => {
         const studentsModel = require('../models/students.model')
         const classesModel  = require('../models/classes.model')
         const subjectsModel = require('../models/subjects.model')
-        const [totalTeachers, totalStudents, totalClasses, totalSubjects] = await Promise.all([
+        const [totalTeachers, activeTeachers, totalStudents, activeStudents, totalClasses, totalSubjects] = await Promise.all([
           teachersModel.countDocuments(),
+          teachersModel.countDocuments({ is_active: true }),
           studentsModel.countDocuments(),
+          studentsModel.countDocuments({ is_active: true }),
           classesModel.countDocuments(),
           subjectsModel.countDocuments(),
         ])
-        return res.send({ status: true, admin, stats: { totalTeachers, totalStudents, totalClasses, totalSubjects } });
+        return res.send({ status: true, admin, stats: { totalTeachers, activeTeachers, totalStudents, activeStudents, totalClasses, totalSubjects } });
       } catch (findErr) {
         console.log(findErr);
         return res

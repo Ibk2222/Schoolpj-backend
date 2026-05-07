@@ -57,7 +57,7 @@ const studentsSchema = new mongoose.Schema(
       gender: { type: String, required: true},
       address: { type: String, required: true },
       is_active: { type: Boolean, default: true },
-parent_phone: {type: String,required: true, trim: true, match: [/^\+?[0-9]{10,15}$/, "Invalid phone number format"]
+parent_phone: {type: String,required: true, trim: true, match: [/^\+?[0-9]{12,}$/, "Invalid phone number format"]
   },
     role: {
       type: String,
