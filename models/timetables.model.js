@@ -48,11 +48,10 @@ const timetablesSchema = new mongoose.Schema(
 );
 
 // Validate that end_time is after start_time
-timetablesSchema.pre("save", function (next) {
+timetablesSchema.pre("save", async function () {
   if (this.start_time >= this.end_time) {
-    return next(new Error("End time must be after start time"));
+    throw new Error("End time must be after start time");
   }
-  next();
 });
 
 // Timetable Model
