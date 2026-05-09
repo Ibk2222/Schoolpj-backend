@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 // Timetable Schema
 const timetablesSchema = new mongoose.Schema(
   {
-    class: {
+    class_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "classes",
       required: true

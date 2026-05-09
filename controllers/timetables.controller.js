@@ -27,7 +27,7 @@ const getAllTimetables = async (req, res) => {
   try {
     const search = (req.query.search || req.query.q || '').toLowerCase().trim()
     let timetables = await timetablesModel.find()
-      .populate('class', 'name')
+      .populate('class_id', 'name')
       .populate('teacher', 'firstname lastname')
       .populate('subject', 'subject_name')
 
