@@ -6,8 +6,7 @@ const testSchema = new mongoose.Schema(
   {
     test_name: {
       type: String,
-      required: true,
-      unique: true,
+      required: false,
       trim: true
     },
     teacher_id: {
