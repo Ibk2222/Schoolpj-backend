@@ -43,6 +43,12 @@ mongoose
     } catch (e) {
       if (e.codeName !== 'IndexNotFound') console.log('dropIndex name_1_subject_1:', e.message);
     }
+    try {
+      await mongoose.connection.collection('classes').dropIndex('student_id_1');
+      console.log('Dropped stale index: student_id_1');
+    } catch (e) {
+      if (e.codeName !== 'IndexNotFound') console.log('dropIndex student_id_1:', e.message);
+    }
   })
   .catch((error) => {
     console.log("Database connection failed");
