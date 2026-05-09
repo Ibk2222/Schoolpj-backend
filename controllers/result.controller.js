@@ -24,7 +24,7 @@ const createResultPage = async (req, res) => {
 const getAllResults = (req, res) => {
   resultModel
     .find()
-    .populate('student', 'firstname lastname email image')
+    .populate('student', 'firstname lastname email image dob')
     .populate('teacher', 'firstname lastname')
     .populate({
       path: 'exam',
