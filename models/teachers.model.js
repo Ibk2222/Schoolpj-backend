@@ -66,6 +66,7 @@ const teacherSchema = new mongoose.Schema(
     },
     resetCode: { type: String, default: null },
     resetCodeExpiry: { type: Date, default: null },
+    lastSeen: { type: Date, default: null },
   },
   { timestamps: true }
 );

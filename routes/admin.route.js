@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   registerAdmin, signupPageAdmin, loginPageAdmin, loginAdmin, getAllAdmins, getAdminById, updateAdmin,
   deleteAdmin, getAdminDashboard, approveAdmin, rejectAdmin, forgotPasswordAdmin, resetPasswordAdmin,
+  heartbeatAdmin, getOnlineUsers,
 } = require('../controllers/admin.controller');
 const {
   createTimetablePage, getAllTimetables, getTimetableById, createTimetable, updateTimetable, editTimetable, deleteTimetable
@@ -53,6 +54,8 @@ router.put('/update-admin/:id', updateAdmin);
 router.delete('/delete-admin/:id', deleteAdmin)
 router.post('/approve-admin/:id', approveAdmin)
 router.post('/reject-admin/:id', rejectAdmin)
+router.post('/heartbeat', heartbeatAdmin)
+router.get('/online-users', getOnlineUsers)
 router.post('/registerstudent',              registerStudent);
 router.get('/signupstudent',               signupPageStudent);  
 router.get('/loginstudent',                loginPageStudent);  

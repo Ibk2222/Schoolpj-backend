@@ -349,6 +349,22 @@ const uploadImage = (req, res) => {
   stream.end(req.file.buffer);
 }
 
+const heartbeatStudent = async (req, res) => {
+  const authHeader = req.headers.authorization
+  if (!authHeader?.startsWith('Bearer '))
+    return res.status(401).send({ status: false, message: 'Missing token' })
+  const token = authHeader.split(' ')[1]
+  jwt.verify(token, process.env.JWT_SECRET || 'secret', async (err, decoded) => {
+    if (err) return res.status(401).send({ status: false, message: 'Invalid token' })
+    try {
+      await studentsModel.findByIdAndUpdate(decoded.id, { lastSeen: new Date() })
+      res.send({ status: true })
+    } catch (e) {
+      res.status(500).send({ status: false })
+    }
+  })
+}
+
 module.exports = {
   signupPageStudent,
   loginPageStudent,
@@ -365,4 +381,5 @@ module.exports = {
   getMyAttendance,
   forgotPasswordStudent,
   resetPasswordStudent,
+  heartbeatStudent,
 }

@@ -64,6 +64,7 @@ phone: {type: String,required: true, trim: true, match: [/^\+?[0-9]{10,15}$/, "I
     },
     resetCode: { type: String, default: null },
     resetCodeExpiry: { type: Date, default: null },
+    lastSeen: { type: Date, default: null },
   },
   { timestamps: true }
 );

@@ -21,6 +21,7 @@ const {
   getMyAttendance,
   forgotPasswordStudent,
   resetPasswordStudent,
+  heartbeatStudent,
 } = require('../controllers/students.controller');
 
 
@@ -43,6 +44,7 @@ router.post('/deactivate/:id', deactivateStudent);
 router.get('/my-attendance', getMyAttendance);
 router.post('/forgot-password', forgotPasswordStudent);
 router.post('/reset-password', resetPasswordStudent);
+router.post('/heartbeat', heartbeatStudent);
 
 // test routes
 router.get('/all-tests', getAllTests);

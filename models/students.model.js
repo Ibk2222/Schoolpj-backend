@@ -65,6 +65,7 @@ parent_phone: { type: String, required: true, trim: true, match: [/^[0-9]{11}$/,
     },
     resetCode: { type: String, default: null },
     resetCodeExpiry: { type: Date, default: null },
+    lastSeen: { type: Date, default: null },
   });
 
 let saltRound = 10;

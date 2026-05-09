@@ -274,6 +274,45 @@ const resetPasswordAdmin = async (req, res) => {
   }
 }
 
+const heartbeatAdmin = async (req, res) => {
+  const authHeader = req.headers.authorization
+  if (!authHeader?.startsWith('Bearer '))
+    return res.status(401).send({ status: false, message: 'Missing token' })
+  const token = authHeader.split(' ')[1]
+  jwt.verify(token, process.env.JWT_SECRET || 'secret', async (err, decoded) => {
+    if (err) return res.status(401).send({ status: false, message: 'Invalid token' })
+    try {
+      await adminModel.findByIdAndUpdate(decoded.id, { lastSeen: new Date() })
+      res.send({ status: true })
+    } catch (e) {
+      res.status(500).send({ status: false })
+    }
+  })
+}
+
+const getOnlineUsers = async (req, res) => {
+  const cutoff = new Date(Date.now() - 2 * 60 * 1000)
+  try {
+    const teacherModel  = require('../models/teachers.model')
+    const studentsModel = require('../models/students.model')
+    const fields = { firstname: 1, lastname: 1, email: 1, lastSeen: 1 }
+    const [teachers, students, admins] = await Promise.all([
+      teacherModel.find({ lastSeen: { $gte: cutoff } }, fields),
+      studentsModel.find({ lastSeen: { $gte: cutoff } }, fields),
+      adminModel.find({ lastSeen: { $gte: cutoff } }, fields),
+    ])
+    const online = [
+      ...teachers.map(u => ({ ...u.toObject(), role: 'teacher' })),
+      ...students.map(u => ({ ...u.toObject(), role: 'student' })),
+      ...admins.map(u => ({ ...u.toObject(), role: 'admin' })),
+    ].sort((a, b) => new Date(b.lastSeen) - new Date(a.lastSeen))
+    res.send({ status: true, online, count: online.length })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send({ status: false, message: 'Error fetching online users' })
+  }
+}
+
 module.exports = {
   signupPageAdmin,
   registerAdmin,
@@ -288,4 +327,6 @@ module.exports = {
   rejectAdmin,
   forgotPasswordAdmin,
   resetPasswordAdmin,
+  heartbeatAdmin,
+  getOnlineUsers,
 };

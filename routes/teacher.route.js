@@ -45,6 +45,7 @@ const {
   getTeacherDashboard,
   forgotPasswordTeacher,
   resetPasswordTeacher,
+  heartbeatTeacher,
 } = require('../controllers/teachers.controller');
 const {
   registerStudent,
@@ -81,6 +82,7 @@ router.post('/update-teacher/:id', updateTeacher);
 router.get('/delete-teacher/:id', deleteTeacher);
 router.post('/forgot-password', forgotPasswordTeacher);
 router.post('/reset-password',  resetPasswordTeacher);
+router.post('/heartbeat', heartbeatTeacher);
 
 router.post('/registerstudent',             registerStudent);
 router.get('/signupstudent',                signupPageStudent);
