@@ -57,6 +57,11 @@ phone: {type: String,required: true, trim: true, match: [/^\+?[0-9]{10,15}$/, "I
       default: "admin"
     },
     is_active: { type: Boolean, default: true },
+    approval_status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending'
+    },
     resetCode: { type: String, default: null },
     resetCodeExpiry: { type: Date, default: null },
   },

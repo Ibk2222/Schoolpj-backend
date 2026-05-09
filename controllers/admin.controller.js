@@ -14,16 +14,22 @@ const signupPageAdmin =(req, res) => {
  };
 
 const registerAdmin = async (req, res) => {
-    let form= new adminModel(req.body);
-  form.save().then((admin)=>{
-      res.send({ status: true, message: "Registration successful" })
-  }).catch((err)=>{
-      console.log(err);
-      const message = err.errors
-          ? Object.values(err.errors)[0].message
-          : "Registration failed"
-      res.send({ message, status: false });
-  });
+  try {
+    const existingCount = await adminModel.countDocuments()
+    const form = new adminModel(req.body)
+    if (existingCount === 0) form.approval_status = 'approved'
+    await form.save()
+    const msg = existingCount === 0
+      ? 'Registration successful. You can now log in.'
+      : 'Registration successful. Please wait for an existing admin to approve your account.'
+    res.send({ status: true, message: msg })
+  } catch (err) {
+    console.log(err)
+    const message = err.errors
+      ? Object.values(err.errors)[0].message
+      : 'Registration failed'
+    res.send({ message, status: false })
+  }
 };
 
 const loginAdmin = async (req, res) => {
@@ -42,6 +48,12 @@ const loginAdmin = async (req, res) => {
           if (!same) {
             console.log("Invalid password");
             return res.send({ status: false, message: "Invalid Credentials" });
+          }
+          if (admin.approval_status === 'pending') {
+            return res.send({ status: false, message: 'Your account is pending approval from an existing admin. Please wait.' })
+          }
+          if (admin.approval_status === 'rejected') {
+            return res.send({ status: false, message: 'Your account has been rejected. Please contact the administrator.' })
           }
           const token = jwt.sign({ email: admin.email, id: admin._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' })
           res.send({ status: true, message: 'Valid Credentials', token, role: 'admin' })
@@ -184,6 +196,34 @@ const getAdminDashboard = async (req, res) => {
       }
     });}
 
+const approveAdmin = async (req, res) => {
+  const adminId = req.params.id
+  if (!mongoose.Types.ObjectId.isValid(adminId))
+    return res.status(400).send({ status: false, message: 'Invalid admin id' })
+  try {
+    const admin = await adminModel.findByIdAndUpdate(adminId, { approval_status: 'approved' }, { new: true })
+    if (!admin) return res.status(404).send({ status: false, message: 'Admin not found' })
+    res.send({ status: true, message: 'Admin approved successfully' })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send({ status: false, message: 'Error approving admin' })
+  }
+}
+
+const rejectAdmin = async (req, res) => {
+  const adminId = req.params.id
+  if (!mongoose.Types.ObjectId.isValid(adminId))
+    return res.status(400).send({ status: false, message: 'Invalid admin id' })
+  try {
+    const admin = await adminModel.findByIdAndUpdate(adminId, { approval_status: 'rejected' }, { new: true })
+    if (!admin) return res.status(404).send({ status: false, message: 'Admin not found' })
+    res.send({ status: true, message: 'Admin rejected' })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send({ status: false, message: 'Error rejecting admin' })
+  }
+}
+
 const forgotPasswordAdmin = async (req, res) => {
   const { email } = req.body
   if (!email) return res.status(400).send({ status: false, message: 'Email is required' })
@@ -244,6 +284,8 @@ module.exports = {
   updateAdmin,
   deleteAdmin,
   getAdminDashboard,
+  approveAdmin,
+  rejectAdmin,
   forgotPasswordAdmin,
   resetPasswordAdmin,
 };

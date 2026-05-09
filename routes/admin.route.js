@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   registerAdmin, signupPageAdmin, loginPageAdmin, loginAdmin, getAllAdmins, getAdminById, updateAdmin,
-  deleteAdmin, getAdminDashboard, forgotPasswordAdmin, resetPasswordAdmin,
+  deleteAdmin, getAdminDashboard, approveAdmin, rejectAdmin, forgotPasswordAdmin, resetPasswordAdmin,
 } = require('../controllers/admin.controller');
 const {
   createTimetablePage, getAllTimetables, getTimetableById, createTimetable, updateTimetable, editTimetable, deleteTimetable
@@ -51,6 +51,8 @@ router.get('/all-admins', getAllAdmins);
 router.get('/edit-admin/:id', getAdminById);
 router.put('/update-admin/:id', updateAdmin);
 router.delete('/delete-admin/:id', deleteAdmin)
+router.post('/approve-admin/:id', approveAdmin)
+router.post('/reject-admin/:id', rejectAdmin)
 router.post('/registerstudent',              registerStudent);
 router.get('/signupstudent',               signupPageStudent);  
 router.get('/loginstudent',                loginPageStudent);  
