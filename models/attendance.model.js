@@ -11,6 +11,7 @@ const attendanceSchema = new mongoose.Schema(
     date: { type: Date, required: true },
     marked_by: { type: mongoose.Schema.Types.ObjectId, ref: "teachers", required: true },
     status: { type: String, enum: ["present", "absent"], required: true },
+    remarks: { type: String, default: '' },
     is_active: { type: Boolean, default: true }
   },
   { timestamps: true }
