@@ -26,7 +26,9 @@ const examsSchema = new mongoose.Schema(
     },
     score: {
       type: Number,
-      required: true
+      required: true,
+      min: 0,
+      max: 70
     },
 
     max_score: {

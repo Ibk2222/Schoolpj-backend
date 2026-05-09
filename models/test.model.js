@@ -18,7 +18,7 @@ const testSchema = new mongoose.Schema(
     test_score: {
       type: Number,
       min: 0,
-      max: 100
+      max: 30
     },
     subject_id: {
       type: mongoose.Schema.Types.ObjectId,

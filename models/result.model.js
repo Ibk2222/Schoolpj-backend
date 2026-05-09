@@ -6,9 +6,10 @@ const resultSchema = new mongoose.Schema(
   {
     student: { type: mongoose.Schema.Types.ObjectId, ref: "students", required: true },
     exam: { type: mongoose.Schema.Types.ObjectId, ref: "exams", required: true },
-    score: { type: Number, required: true },
+    score: { type: Number, required: true, min: 0, max: 70 },
     grade_level: { type: String, required: true },
     teacher: { type: mongoose.Schema.Types.ObjectId, ref: "teachers", required: true },
+    test_score: { type: Number, min: 0, max: 30, default: null },
     is_active: { type: Boolean, default: true }
   }
 );
