@@ -39,6 +39,12 @@ const loginTeacher = (req, res) => {
           if (!same) {
             res.send({ status: false, message: "Invalid Credentials" });
           } else {
+            if (teacher.approval_status === 'pending') {
+              return res.send({ status: false, message: "Your account is pending admin approval. Please wait." });
+            }
+            if (teacher.approval_status === 'rejected') {
+              return res.send({ status: false, message: "Your account has been rejected. Please contact the administrator." });
+            }
             const token = jwt.sign({ email: teacher.email, id: teacher._id }, process.env.JWT_SECRET || "secret", { expiresIn: "7d" });
             res.send({ status: true, message: "Valid Credentials", token, role: 'teacher' });
           }
@@ -256,6 +262,34 @@ const updateTeacher = (req, res) =>{
 //   }
 // };
 
+const approveTeacher = async (req, res) => {
+  const teacherId = req.params.id
+  if (!mongoose.Types.ObjectId.isValid(teacherId))
+    return res.status(400).send({ status: false, message: 'Invalid teacher id' })
+  try {
+    const teacher = await teacherModel.findByIdAndUpdate(teacherId, { approval_status: 'approved' }, { new: true })
+    if (!teacher) return res.status(404).send({ status: false, message: 'Teacher not found' })
+    res.send({ status: true, message: 'Teacher approved successfully' })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send({ status: false, message: 'Error approving teacher' })
+  }
+}
+
+const rejectTeacher = async (req, res) => {
+  const teacherId = req.params.id
+  if (!mongoose.Types.ObjectId.isValid(teacherId))
+    return res.status(400).send({ status: false, message: 'Invalid teacher id' })
+  try {
+    const teacher = await teacherModel.findByIdAndUpdate(teacherId, { approval_status: 'rejected' }, { new: true })
+    if (!teacher) return res.status(404).send({ status: false, message: 'Teacher not found' })
+    res.send({ status: true, message: 'Teacher rejected' })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send({ status: false, message: 'Error rejecting teacher' })
+  }
+}
+
 const forgotPasswordTeacher = async (req, res) => {
   const { email } = req.body
   if (!email) return res.status(400).send({ status: false, message: 'Email is required' })
@@ -316,6 +350,8 @@ module.exports = {
   updateTeacher,
   getTeacherDashboard,
   deleteTeacher,
+  approveTeacher,
+  rejectTeacher,
   forgotPasswordTeacher,
   resetPasswordTeacher,
 };

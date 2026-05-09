@@ -11,7 +11,8 @@ const {
   createExamPage, getAllExams, getExamById, createExam, updateExam, editExam, deleteExam
 } = require('../controllers/exams.controller');
   const {landingPage,registerTeacher,
-  loginPage, loginTeacher,getAllTeachers, editTeacher, updateTeacher, deleteTeacher, signupPage, getTeacherDashboard} = require('../controllers/teachers.controller');
+  loginPage, loginTeacher,getAllTeachers, editTeacher, updateTeacher, deleteTeacher, signupPage, getTeacherDashboard,
+  approveTeacher, rejectTeacher} = require('../controllers/teachers.controller');
 const{ createSubjectPage, manageSubjectPage, getAllSubjects, getAllSubjectsApi,
   createSubject,
   updateSubject,
@@ -68,6 +69,8 @@ router.get('/dashboard',        getTeacherDashboard);     // ✅ fixed path
 router.get('/edit-teacher/:id', editTeacher);
 router.post('/update-teacher/:id', updateTeacher);
 router.get('/delete-teacher/:id', deleteTeacher);
+router.post('/approve-teacher/:id', approveTeacher);
+router.post('/reject-teacher/:id', rejectTeacher);
 
 // attendance routes
 router.get('/addattendance', createAttendancePage);

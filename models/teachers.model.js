@@ -59,6 +59,11 @@ const teacherSchema = new mongoose.Schema(
       enum: ["teacher", "admin"],
       default: "teacher"
     },
+    approval_status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending'
+    },
     resetCode: { type: String, default: null },
     resetCodeExpiry: { type: Date, default: null },
   },
