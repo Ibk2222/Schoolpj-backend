@@ -292,10 +292,10 @@ const forgotPasswordStudent = async (req, res) => {
     res.send({ status: true, message: 'Reset code sent to your email' })
   } catch (e) {
     console.log(e)
-    res.status(500).send({ status: false, message: 'Server error' })
+    res.status(500).send({ status: false, message: e.message ?? 'Server error' })
   }
 }
- 
+
 const resetPasswordStudent = async (req, res) => {
   const { email, code, newPassword } = req.body
   if (!email || !code || !newPassword)
