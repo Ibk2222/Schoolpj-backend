@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary");
 
 const { Resend } = require("resend");
-const resend = new Resend(process.env.RESEND_API_KEY)
+const getResend = () => new Resend(process.env.RESEND_API_KEY)
 const mongoose = require("mongoose");
 
 
@@ -282,7 +282,7 @@ const forgotPasswordStudent = async (req, res) => {
 
     await studentsModel.findByIdAndUpdate(student._id, { resetCode: code, resetCodeExpiry: expiry })
 
-    await resend.emails.send({
+    await getResend().emails.send({
       from: 'School System <onboarding@resend.dev>',
       to: [email],
       subject: 'Your Password Reset Code',
