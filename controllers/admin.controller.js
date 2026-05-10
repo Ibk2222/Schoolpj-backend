@@ -1,8 +1,15 @@
 const adminModel = require('../models/admin.model');
 const jwt = require("jsonwebtoken");
 
-const { Resend } = require("resend");
-const resend = new Resend(process.env.RESEND_API_KEY)
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 const mongoose = require("mongoose");
 
 const signupPageAdmin =(req, res) => {
@@ -236,9 +243,9 @@ const forgotPasswordAdmin = async (req, res) => {
 
     await adminModel.findByIdAndUpdate(admin._id, { resetCode: code, resetCodeExpiry: expiry })
 
-    await resend.emails.send({
-      from: 'School System <onboarding@resend.dev>',
-      to: [email],
+    await transporter.sendMail({
+      from: `"School System" <${process.env.GMAIL_USER}>`,
+      to: email,
       subject: 'Your Password Reset Code',
       html: `<p>Your password reset code is: <strong>${code}</strong></p><p>This code expires in 15 minutes.</p>`
     })
