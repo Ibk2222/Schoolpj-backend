@@ -22,11 +22,11 @@ const signupPageAdmin =(req, res) => {
 
 const registerAdmin = async (req, res) => {
   try {
-    const existingCount = await adminModel.countDocuments()
+    const approvedCount = await adminModel.countDocuments({ approval_status: 'approved' })
     const form = new adminModel(req.body)
-    if (existingCount === 0) form.approval_status = 'approved'
+    if (approvedCount === 0) form.approval_status = 'approved'
     await form.save()
-    const msg = existingCount === 0
+    const msg = approvedCount === 0
       ? 'Registration successful. You can now log in.'
       : 'Registration successful. Please wait for an existing admin to approve your account.'
     res.send({ status: true, message: msg })

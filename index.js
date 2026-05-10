@@ -22,6 +22,16 @@ mongoose
   .connect(URI)
   .then(async () => {
     console.log("Database connected");
+
+    // One-time migration: approve all admins who existed before the approval system was added
+    const adminModel = require('./models/admin.model')
+    const migrationCutoff = new Date('2026-05-10T23:59:59Z')
+    const migrated = await adminModel.updateMany(
+      { approval_status: { $in: ['pending', null, undefined] }, createdAt: { $lt: migrationCutoff } },
+      { $set: { approval_status: 'approved' } }
+    )
+    if (migrated.modifiedCount > 0) console.log(`Approved ${migrated.modifiedCount} pre-existing admin(s)`)
+
     const staleIndexes = ['class_name_1', 'name_1'];
     for (const idx of staleIndexes) {
       try {
