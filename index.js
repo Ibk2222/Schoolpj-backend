@@ -23,12 +23,12 @@ mongoose
   .then(async () => {
     console.log("Database connected");
 
-    // Bootstrap: if no approved admin exists yet, approve all pending ones so the system can function
+    // Bootstrap: if no approved admin exists yet, approve all admins so the system can function
     const adminModel = require('./models/admin.model')
     const approvedCount = await adminModel.countDocuments({ approval_status: 'approved' })
     if (approvedCount === 0) {
       const migrated = await adminModel.updateMany(
-        { approval_status: 'pending' },
+        { approval_status: { $ne: 'approved' } },
         { $set: { approval_status: 'approved' } }
       )
       if (migrated.modifiedCount > 0) console.log(`Bootstrap: approved ${migrated.modifiedCount} pre-existing admin(s)`)
