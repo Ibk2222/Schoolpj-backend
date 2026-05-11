@@ -4,6 +4,7 @@ const cloudinary = require("cloudinary");
 
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 
 
@@ -308,10 +309,8 @@ const resetPasswordStudent = async (req, res) => {
     if (!student.resetCodeExpiry || new Date() > student.resetCodeExpiry)
       return res.status(400).send({ status: false, message: 'Reset code has expired. Please request a new one.' })
  
-    student.password = newPassword
-    student.resetCode = null
-    student.resetCodeExpiry = null
-    await student.save()
+    const hashed = await bcrypt.hash(newPassword, 10)
+    await studentsModel.findByIdAndUpdate(student._id, { password: hashed, resetCode: null, resetCodeExpiry: null }, { runValidators: false })
  
     res.send({ status: true, message: 'Password reset successfully' })
   } catch (e) {

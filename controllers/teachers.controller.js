@@ -2,6 +2,7 @@ const teacherModel = require("../models/teachers.model");
 const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 
 
@@ -327,10 +328,8 @@ const resetPasswordTeacher = async (req, res) => {
       return res.status(400).send({ status: false, message: 'Invalid reset code' })
     if (!teacher.resetCodeExpiry || new Date() > teacher.resetCodeExpiry)
       return res.status(400).send({ status: false, message: 'Reset code has expired. Please request a new one.' })
-    teacher.password = newPassword
-    teacher.resetCode = null
-    teacher.resetCodeExpiry = null
-    await teacher.save()
+    const hashed = await bcrypt.hash(newPassword, 10)
+    await teacherModel.findByIdAndUpdate(teacher._id, { password: hashed, resetCode: null, resetCodeExpiry: null }, { runValidators: false })
  
     res.send({ status: true, message: 'Password reset successfully' })
   } catch (e) {

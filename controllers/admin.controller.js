@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 
 const signupPageAdmin =(req, res) => {
@@ -262,10 +263,8 @@ const resetPasswordAdmin = async (req, res) => {
     if (!admin.resetCodeExpiry || new Date() > admin.resetCodeExpiry)
       return res.status(400).send({ status: false, message: 'Reset code has expired. Please request a new one.' })
  
-    admin.password = newPassword
-    admin.resetCode = null
-    admin.resetCodeExpiry = null
-    await admin.save()
+    const hashed = await bcrypt.hash(newPassword, 10)
+    await adminModel.findByIdAndUpdate(admin._id, { password: hashed, resetCode: null, resetCodeExpiry: null }, { runValidators: false })
  
     res.send({ status: true, message: 'Password reset successfully' })
   } catch (e) {
