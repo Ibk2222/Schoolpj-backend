@@ -1,14 +1,7 @@
 const teacherModel = require("../models/teachers.model");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
+const { Resend } = require("resend");
+const getResend = () => new Resend(process.env.RESEND_API_KEY);
 const mongoose = require("mongoose");
 
 
@@ -309,9 +302,9 @@ const forgotPasswordTeacher = async (req, res) => {
 
     await teacherModel.findByIdAndUpdate(teacher._id, { resetCode: code, resetCodeExpiry: expiry })
 
-    await transporter.sendMail({
-      from: `"School System" <${process.env.GMAIL_USER}>`,
-      to: email,
+    await getResend().emails.send({
+      from: 'School System <onboarding@resend.dev>',
+      to: [email],
       subject: 'Your Password Reset Code',
       html: `<p>Your password reset code is: <strong>${code}</strong></p><p>This code expires in 15 minutes.</p>`
     })
