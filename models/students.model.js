@@ -53,7 +53,7 @@ const studentsSchema = new mongoose.Schema(
     },  
 
     image: { type: String, default: '' },
-      dob: { type: Date, required: true },
+      dob: { type: Date, required: true, min: new Date('2017-01-01'), max: new Date('2022-12-31') },
       gender: { type: String, required: true, enum: ["male", "female"] },
       address: { type: String, required: true },
       is_active: { type: Boolean, default: true },
