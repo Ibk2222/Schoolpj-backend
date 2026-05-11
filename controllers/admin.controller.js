@@ -1,8 +1,8 @@
 const adminModel = require('../models/admin.model');
 const jwt = require("jsonwebtoken");
 
-const { Resend } = require("resend");
-const getResend = () => new Resend(process.env.RESEND_API_KEY);
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const mongoose = require("mongoose");
 
 const signupPageAdmin =(req, res) => {
@@ -236,9 +236,9 @@ const forgotPasswordAdmin = async (req, res) => {
 
     await adminModel.findByIdAndUpdate(admin._id, { resetCode: code, resetCodeExpiry: expiry })
 
-    await getResend().emails.send({
-      from: 'School System <onboarding@resend.dev>',
-      to: [email],
+    await sgMail.send({
+      from: process.env.SENDGRID_FROM_EMAIL,
+      to: email,
       subject: 'Your Password Reset Code',
       html: `<p>Your password reset code is: <strong>${code}</strong></p><p>This code expires in 15 minutes.</p>`
     })
