@@ -39,8 +39,8 @@ const getAssignmentById = async (req, res) => {
 
 const createAssignment = async (req, res) => {
   try {
-    const { title, description, class_id, subject_id, due_date, questions } = req.body
-    const teacher_id = req.user._id
+    const { title, description, class_id, subject_id, due_date, questions, teacher_id: bodyTeacherId } = req.body
+    const teacher_id = bodyTeacherId || (req.user.role === 'teacher' ? req.user._id : null)
     const assignment = new assignmentModel({ title, description, class_id, subject_id, teacher_id, due_date, questions })
     await assignment.save()
     res.send({ status: true, message: 'Assignment created successfully', assignment })

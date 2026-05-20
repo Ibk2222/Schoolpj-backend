@@ -11,7 +11,7 @@ const assignmentSchema = new mongoose.Schema({
   description: { type: String, trim: true, default: '' },
   class_id: { type: mongoose.Schema.Types.ObjectId, ref: 'classes', required: true },
   subject_id: { type: mongoose.Schema.Types.ObjectId, ref: 'subjects', required: true },
-  teacher_id: { type: mongoose.Schema.Types.ObjectId, ref: 'teachers', required: true },
+  teacher_id: { type: mongoose.Schema.Types.ObjectId, ref: 'teachers', default: null },
   due_date: { type: Date, required: true },
   questions: { type: [questionSchema], validate: { validator: v => v.length > 0, message: 'At least one question is required' } },
   is_active: { type: Boolean, default: true },
