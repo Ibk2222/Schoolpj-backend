@@ -1,6 +1,7 @@
 const express= require("express")
 const app =express()
 const ejs = require("ejs")
+const path = require("path")
 require("dotenv").config({ override: true });
 const PORT = process.env.PORT || 3000
 const mongoose = require("mongoose")
@@ -11,6 +12,7 @@ const URI = process.env.MONGODB_URI
 const cors = require("cors")
 
 app.use(cors())
+app.use(express.static(path.join(__dirname, "../Samwebsite")))
 app.set("view engine", "ejs")
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "50mb" }));

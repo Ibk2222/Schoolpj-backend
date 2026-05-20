@@ -5,6 +5,8 @@ const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 const {landingPage} = require('../controllers/teachers.controller');
 const { getAllTests, getTestById } = require('../controllers/test.controller');
+const { requireStudent } = require('../middleware/auth');
+const { getMyAssignments, getAssignmentForStudent, submitAssignment, getMySubmission } = require('../controllers/assignment.controller');
 const {
   registerStudent,
   loginStudent,
@@ -49,5 +51,11 @@ router.post('/heartbeat', heartbeatStudent);
 // test routes
 router.get('/all-tests', getAllTests);
 router.get('/test/:id', getTestById);
+
+// assignment routes (student read + submit only)
+router.get('/my-assignments', requireStudent, getMyAssignments);
+router.get('/assignment/:id', requireStudent, getAssignmentForStudent);
+router.post('/assignment/:id/submit', requireStudent, submitAssignment);
+router.get('/assignment/:id/my-submission', requireStudent, getMySubmission);
 
 module.exports = router;

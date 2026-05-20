@@ -40,6 +40,10 @@ const { getAllClasses,
   editClasses,
   updateClass,
   deleteClass } = require('../controllers/classes.controller');
+const { requireTeacherOrAdmin } = require('../middleware/auth');
+const {
+  getAllAssignments, getAssignmentById, createAssignment, updateAssignment, deleteAssignment, getAssignmentSubmissions,
+} = require('../controllers/assignment.controller');
 
 router.post('/registersadmin', registerAdmin);
 router.post('/forgot-password', forgotPasswordAdmin);
@@ -134,5 +138,13 @@ router.post('/create-test', createTest);
 router.get('/edit-test/:id', editTest);
 router.post('/update-test/:id', updateTest);
 router.get('/delete-test/:id', deleteTest);
+
+// assignment routes (teacher/admin only)
+router.get('/all-assignments', requireTeacherOrAdmin, getAllAssignments);
+router.get('/assignment/:id', requireTeacherOrAdmin, getAssignmentById);
+router.post('/create-assignment', requireTeacherOrAdmin, createAssignment);
+router.post('/update-assignment/:id', requireTeacherOrAdmin, updateAssignment);
+router.delete('/delete-assignment/:id', requireTeacherOrAdmin, deleteAssignment);
+router.get('/assignment/:id/submissions', requireTeacherOrAdmin, getAssignmentSubmissions);
 
 module.exports = router;
