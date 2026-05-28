@@ -348,6 +348,37 @@ const uploadImage = (req, res) => {
   stream.end(req.file.buffer);
 }
 
+const getMyStudents = async (req, res) => {
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer '))
+    return res.status(401).send({ status: false, message: 'Unauthorized' })
+
+  const token = authHeader.split(' ')[1]
+
+  jwt.verify(token, process.env.JWT_SECRET || 'secret', async (err, decoded) => {
+    if (err) return res.status(401).send({ status: false, message: 'Token expired or invalid' })
+
+    try {
+      const classesModel = require('../models/classes.model')
+
+      // Get every class that belongs to this teacher
+      const myClasses = await classesModel.find({ teacher_id: decoded.id }, '_id')
+      const classIds = myClasses.map(c => c._id)
+
+      // Get only students enrolled in those classes
+      const students = await studentsModel
+        .find({ class_id: { $in: classIds } }, { password: 0, resetCode: 0, resetCodeExpiry: 0 })
+        .populate('class_id', 'name')
+        .sort({ lastname: 1, firstname: 1 })
+
+      return res.send({ status: true, students })
+    } catch (e) {
+      console.log(e)
+      return res.status(500).send({ status: false, message: 'Error fetching students' })
+    }
+  })
+}
+
 const heartbeatStudent = async (req, res) => {
   const authHeader = req.headers.authorization
   if (!authHeader?.startsWith('Bearer '))
@@ -371,6 +402,7 @@ module.exports = {
   registerStudent,
   loginStudent,
   getAllStudents,
+  getMyStudents,
   getStudentDashboard,
   getStudentById,
   updateStudent,

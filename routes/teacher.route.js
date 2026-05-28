@@ -52,8 +52,9 @@ const {
   signupPageStudent,
   loginPageStudent,
   loginStudent,
-    getStudentById,
-  getAllStudents,       // ✅ added
+  getStudentById,
+  getAllStudents,
+  getMyStudents,
   updateStudent,
   deleteStudent,
 } = require('../controllers/students.controller');
@@ -92,6 +93,7 @@ router.post('/registerstudent',             registerStudent);
 router.get('/signupstudent',                signupPageStudent);
 router.get('/loginstudent',                 loginPageStudent);
 router.get('/all-students',                 getAllStudents);
+router.get('/my-students',                  getMyStudents);
 router.get('/edit-student/:id',             getStudentById);
 router.post('/update-student/:id',          updateStudent);
 router.get('/delete-student/:id',           deleteStudent);
