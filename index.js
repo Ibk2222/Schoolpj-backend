@@ -8,20 +8,34 @@ const mongoose = require("mongoose")
 const adminRoute = require("./routes/admin.route");
 const studentRoute = require("./routes/students.route");
 const teacherRoute = require("./routes/teacher.route");
-const URI = process.env.MONGODB_URI
+const DEFAULT_MONGODB_URI = 'mongodb://127.0.0.1:27017/school-management';
+const URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 const cors = require("cors")
+
+if (!process.env.MONGODB_URI) {
+  console.warn('MONGODB_URI is not set. Falling back to localhost MongoDB at 127.0.0.1:27017/school-management');
+}
 
 app.use(cors())
 app.use(express.static(path.join(__dirname, "../Samwebsite")))
 app.set("view engine", "ejs")
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "50mb" }));
+app.use((req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).send({
+      status: false,
+      message: 'Database is unavailable. Please try again later.'
+    });
+  }
+  next();
+});
 app.use("/admin", adminRoute)
 app.use("/students", studentRoute)
 app.use("/teacher", teacherRoute)
 
 mongoose
-  .connect(URI)
+  .connect(URI, { serverSelectionTimeoutMS: 5000 })
   .then(async () => {
     console.log("Database connected");
 
